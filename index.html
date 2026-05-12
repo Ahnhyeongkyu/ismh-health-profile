@@ -543,7 +543,7 @@ body.pre-consent .pbar,body.pre-consent .step-dots{visibility:hidden;}
 
   <div class="botnav">
     <div class="bbk gone"></div>
-    <button class="bnx" id="consentBtn" disabled onclick="consentContinue()">Continue &nbsp;→</button>
+    <button class="bnx" id="consentBtn" onclick="consentContinue()">Continue &nbsp;→</button>
   </div>
 </div>
 
@@ -1030,13 +1030,20 @@ window.tog=id=>{
   C[id]=!C[id];
   if(id==='consent'){
     document.getElementById('consentBox').classList.toggle('on',C[id]);
-    document.getElementById('consentBtn').disabled=!C[id];
   }else{
     document.getElementById(id).classList.toggle('on',C[id]);
   }
 };
 window.consentContinue=()=>{
-  if(!C.consent){return;}
+  if(!C.consent){
+    alert('Please check the consent box above before continuing.');
+    var box=document.getElementById('consentBox');
+    box.scrollIntoView({behavior:'smooth',block:'center'});
+    box.style.transition='box-shadow .3s';
+    box.style.boxShadow='0 0 0 3px rgba(248,113,113,0.6)';
+    setTimeout(function(){box.style.boxShadow='';},1500);
+    return;
+  }
   S.consent_v1='yes';
   document.body.classList.remove('pre-consent');
   document.getElementById('s_consent').classList.remove('on');
@@ -1307,7 +1314,7 @@ window.resetAll=()=>{
   IDS.forEach(id=>document.getElementById(id).classList.remove('on'));
   document.getElementById('s_consent').classList.add('on');
   document.body.classList.add('pre-consent');
-  document.getElementById('consentBtn').disabled=true;
+  
   document.getElementById('pF').style.width='0%';
   document.getElementById('tT').textContent='My Health Profile';
   document.getElementById('tS').textContent='';
