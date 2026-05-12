@@ -1124,7 +1124,7 @@ window.bk=from=>{
 //  Replace URL below with your Apps Script Web App URL
 // ════════════════════════════════════════════════
 // 배포 후 발급된 Apps Script Web App URL 로 교체하세요
-const GOOGLE_SCRIPT_URL = '__PASTE_YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE__';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-6d1Bgsb7grheoP5cExcOGMVG9xW0ulGBMq_LeeUBxCryTKgzmrsHZbjtCEd-861cIw/exec';
 
 async function sendToSheets(payload, attempts=3) {
   if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf('__PASTE') === 0) {
