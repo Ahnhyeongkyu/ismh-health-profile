@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#01020a">
+<title>My Health Profile · St. Mary's Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════
+   TOKENS
+══════════════════════════════ */
+:root{
+  --bg:    #01020a;
+  --s1:    #06090f;
+  --s2:    #0a0f1a;
+  --s3:    #0f1624;
+  --navy:  #1d4ed8;
+  --sky:   #38bdf8;
+  --teal:  #2dd4bf;
+  --gold:  #fbbf24;
+  --rose:  #f87171;
+  --mint:  #34d399;
+  --amber: #fb923c;
+  --violet:#a78bfa;
+  --line:  rgba(255,255,255,0.06);
+  --muted: rgba(255,255,255,0.38);
+  --text:  rgba(255,255,255,0.88);
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);}
+body{font-family:'Inter',sans-serif;color:var(--text);font-size:15px;line-height:1.6;}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);overflow-x:hidden;}
+
+/* ══ TOP BAR ══ */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-t)+12px) 20px 12px;
+  position:sticky;top:0;z-index:200;
+  background:rgba(1,2,10,0.95);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+}
+.tl{display:flex;align-items:center;gap:10px;}
+.cross{width:28px;height:28px;background:var(--navy);border-radius:6px;position:relative;flex-shrink:0;}
+.cross::before,.cross::after{content:'';position:absolute;background:#fff;border-radius:1px;top:50%;left:50%;transform:translate(-50%,-50%);}
+.cross::before{width:12px;height:2.5px;}.cross::after{width:2.5px;height:12px;}
+.ti-h{font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.ti-t{font-size:12.5px;font-weight:700;color:#fff;letter-spacing:.01em;}
+.ti-s{font-size:11px;color:var(--muted);font-weight:400;}
+
+/* progress */
+.pbar{height:3px;background:rgba(255,255,255,0.04);}
+.pfill{height:100%;background:linear-gradient(90deg,var(--navy),var(--sky),var(--teal));width:0%;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+/* steps dots */
+.step-dots{display:flex;gap:5px;padding:8px 20px;border-bottom:1px solid var(--line);}
+.sdot{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.08);transition:all .4s;}
+.sdot.done{background:var(--teal);}
+.sdot.cur{background:var(--sky);}
+
+/* ══ SCREENS ══ */
+.scr{display:none;animation:up .4s cubic-bezier(.4,0,.2,1) both;}
+.scr.on{display:block;}
+@keyframes up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ WELCOME HERO ══ */
+.w-hero{
+  position:relative;min-height:340px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:48px 24px 40px;
+  overflow:hidden;
+}
+.w-hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%,rgba(29,78,216,0.5) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(45,212,191,0.12) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 10% 60%,rgba(167,139,250,0.08) 0%,transparent 50%);
+}
+.w-hero-grid{
+  position:absolute;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+}
+.w-hero *{position:relative;z-index:1;}
+.w-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;margin-bottom:18px;
+  background:rgba(45,212,191,0.10);border:1px solid rgba(45,212,191,0.28);
+  border-radius:20px;font-size:10px;font-weight:600;color:var(--teal);
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.w-tag::before{content:'';width:5px;height:5px;background:var(--teal);border-radius:50%;}
+.w-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:64px;letter-spacing:.04em;color:#fff;
+  line-height:.95;margin-bottom:12px;
+}
+.w-title .hl{
+  display:block;
+  background:linear-gradient(135deg,var(--sky),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.w-sub{font-size:14px;color:var(--muted);line-height:1.65;max-width:290px;margin:0 auto 24px;}
+.w-chips{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;}
+.chip{
+  padding:5px 12px;background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);border-radius:20px;
+  font-size:11.5px;color:var(--muted);
+}
+
+/* parts */
+.parts-wrap{padding:20px;}
+.parts-title{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
+.part-row{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;background:var(--s1);
+  border:1px solid var(--line);border-radius:14px;
+  margin-bottom:8px;
+}
+.part-num{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;
+  line-height:1;flex-shrink:0;width:28px;text-align:center;
+}
+.pn-a{color:var(--violet);}
+.pn-b{color:var(--sky);}
+.pn-c{color:var(--gold);}
+.part-info{flex:1;}
+.part-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:1px;}
+.part-desc{font-size:11.5px;color:var(--muted);}
+.part-badge{font-size:9.5px;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;}
+.pb-r{background:rgba(167,139,250,0.12);color:var(--violet);border:1px solid rgba(167,139,250,0.22);}
+.pb-h{background:rgba(56,189,248,0.10);color:var(--sky);border:1px solid rgba(56,189,248,0.2);}
+.pb-g{background:rgba(251,191,36,0.10);color:var(--gold);border:1px solid rgba(251,191,36,0.2);}
+
+/* ══ CONSENT ══ */
+.consent-wrap{padding:0 20px 20px;}
+.blk{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px;}
+.blk h4{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px;}
+.blk p,.blk li{font-size:13px;color:var(--muted);line-height:1.7;}
+.blk ul{list-style:none;}
+.blk li{padding:2px 0 2px 14px;position:relative;}
+.blk li::before{content:'·';position:absolute;left:2px;color:var(--teal);}
+.blk strong{color:var(--text);}
+.ctog{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;background:var(--s1);border:1.5px solid var(--line);border-radius:12px;margin-bottom:9px;cursor:pointer;transition:all .2s;}
+.ctog.on{border-color:var(--teal);background:rgba(45,212,191,0.05);}
+.cbox{width:22px;height:22px;border:1.5px solid rgba(255,255,255,0.15);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);transition:all .2s;}
+.ctog.on .cbox{background:var(--teal);border-color:var(--teal);}
+.ck{display:none;color:#000;font-size:13px;font-weight:800;}
+.ctog.on .ck{display:block;}
+.ctxt{font-size:13px;color:var(--text);line-height:1.55;flex:1;}
+.ctxt strong{color:var(--teal);}
+.req{color:var(--rose);}
+
+/* ══ SECTION HERO (per screen) ══ */
+.scr-hero{
+  position:relative;padding:36px 24px 28px;
+  overflow:hidden;border-bottom:1px solid var(--line);
+  margin-bottom:24px;
+}
+.scr-hero-bg{position:absolute;inset:0;z-index:0;}
+.scr-hero *:not(.scr-hero-bg){position:relative;z-index:1;}
+.sh-eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+.sh-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.03em;color:#fff;line-height:.95;margin-bottom:8px;}
+.sh-sub{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:280px;}
+
+/* Part A hero */
+.hero-A .scr-hero-bg{background:radial-gradient(ellipse 90% 70% at 50% -20%,rgba(167,139,250,0.3) 0%,transparent 70%);}
+.hero-A .sh-eyebrow{color:var(--violet);}
+
+/* Part B hero */
+.hero-B .scr-hero-bg{background:radial-gradient(ellipse 90% 70% at 50% -20%,rgba(56,189,248,0.3) 0%,transparent 70%);}
+.hero-B .sh-eyebrow{color:var(--sky);}
+
+/* Part C hero (risks) */
+.hero-C .scr-hero-bg{background:radial-gradient(ellipse 90% 70% at 50% -20%,rgba(251,191,36,0.25) 0%,transparent 70%);}
+.hero-C .sh-eyebrow{color:var(--gold);}
+
+/* ══ BODY PADDING ══ */
+.bd{padding:0 20px 130px;}
+.bd-full{padding-bottom:130px;}
+
+/* ══ QUESTIONS ══ */
+.hq{margin-bottom:24px;}
+.hq-tag{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:5px;}
+.hq-text{font-size:16px;font-weight:500;color:#fff;line-height:1.4;margin-bottom:12px;}
+.hq-hint{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:10px;}
+.hq-opts{display:flex;flex-direction:column;gap:7px;}
+.hq-opt{
+  display:flex;align-items:center;gap:13px;
+  padding:13px 15px;background:var(--s2);
+  border:1.5px solid var(--line);border-radius:12px;
+  cursor:pointer;transition:all .18s;
+}
+.hq-opt:active{transform:scale(0.983);}
+.hq-opt.on{background:rgba(29,78,216,0.15);border-color:rgba(56,189,248,0.5);}
+.hq-radio{
+  width:18px;height:18px;border:1.5px solid rgba(255,255,255,0.15);
+  border-radius:50%;flex-shrink:0;transition:all .18s;
+}
+.hq-opt.on .hq-radio{border-color:var(--sky);border-width:5px;background:var(--sky);}
+.hq-opt-txt{font-size:14px;color:var(--muted);font-weight:400;}
+.hq-opt.on .hq-opt-txt{color:#fff;font-weight:500;}
+
+/* ══ LIKERT ══ */
+.lk-intro{background:var(--s2);border-left:3px solid var(--violet);border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:16px;}
+.lk-intro h4{font-size:10px;font-weight:700;color:var(--violet);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.lk-intro p{font-size:12.5px;color:var(--muted);line-height:1.6;}
+.lk-item{background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:9px;transition:border-color .2s;}
+.lk-item.done{border-color:rgba(167,139,250,0.3);}
+.lk-stmt{font-size:13.5px;color:var(--text);line-height:1.45;margin-bottom:12px;}
+.lk-stmt .idx{font-weight:700;color:var(--violet);margin-right:5px;}
+.lk-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.lk-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 3px 7px;border:1.5px solid var(--line);border-radius:8px;background:var(--s1);cursor:pointer;transition:all .18s;}
+.lk-btn:active{transform:scale(0.9);}
+.lk-btn.on{background:var(--navy);border-color:var(--sky);}
+.lk-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.12);background:var(--s2);}
+.lk-btn.on .lk-dot{background:var(--sky);border-color:var(--sky);}
+.lk-lbl{font-size:9px;color:var(--muted);text-align:center;font-weight:500;}
+.lk-btn.on .lk-lbl{color:rgba(255,255,255,0.8);}
+.lk-legend{display:flex;justify-content:space-between;font-size:9.5px;color:rgba(255,255,255,0.18);margin-top:5px;}
+
+/* ══ YES / NO ══ */
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ynb{
+  padding:14px 8px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--s2);color:var(--muted);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;text-align:center;transition:all .18s;letter-spacing:.06em;
+}
+.ynb:active{transform:scale(0.95);}
+.ynb.y{background:rgba(248,113,113,0.12);border-color:var(--rose);color:var(--rose);}
+.ynb.n{background:rgba(45,212,191,0.08);border-color:var(--teal);color:var(--teal);}
+
+/* ══ NUMBER INPUTS ══ */
+.num-row{display:flex;gap:8px;}
+.num-wrap{position:relative;flex:1;}
+.num-inp{
+  width:100%;padding:13px 36px 13px 13px;
+  background:var(--s2);border:1.5px solid var(--line);border-radius:12px;
+  color:#fff;font-family:'Inter',sans-serif;font-size:17px;font-weight:600;
+  transition:border-color .2s;-webkit-appearance:none;
+}
+.num-inp:focus{outline:none;border-color:var(--sky);}
+.num-inp::placeholder{color:rgba(255,255,255,0.15);font-weight:400;}
+.num-inp::-webkit-outer-spin-button,.num-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.num-inp[type=number]{-moz-appearance:textfield;}
+.num-unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:600;color:var(--muted);pointer-events:none;letter-spacing:.04em;}
+
+/* ══ BMI ══ */
+.unit-tog{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px;margin-bottom:10px;}
+.utb{padding:6px 11px;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--muted);background:transparent;white-space:nowrap;}
+.utb.on{background:var(--gold);color:#000;}
+.bmi-result-mini{margin-top:10px;padding:14px;background:var(--s2);border-radius:10px;border:1px solid var(--line);text-align:center;display:none;}
+.bmi-result-mini .bv{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:1;display:block;margin-bottom:2px;}
+.bmi-result-mini .bc{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.bmi-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* ══ TEXTAREA ══ */
+.form-ta{width:100%;min-height:80px;padding:13px;background:var(--s2);border:1.5px solid var(--line);border-radius:12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;resize:none;transition:border-color .2s;}
+.form-ta:focus{outline:none;border-color:var(--teal);}
+.form-ta::placeholder{color:rgba(255,255,255,0.15);}
+
+/* ══ CALC BUTTON ══ */
+.calc-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px;margin-top:10px;
+  background:rgba(251,191,36,0.1);border:1.5px solid rgba(251,191,36,0.28);
+  border-radius:10px;color:var(--gold);
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;letter-spacing:.02em;text-transform:uppercase;
+}
+.calc-btn:hover{background:rgba(251,191,36,0.18);}
+.calc-btn:active{transform:scale(0.97);}
+
+/* ══ DIVIDER ══ */
+.div{height:1px;background:var(--line);margin:20px 0;}
+
+/* ══ BOTTOM NAV ══ */
+.botnav{
+  position:sticky;bottom:0;
+  padding:12px 20px calc(var(--safe-b)+12px);
+  background:rgba(1,2,10,0.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--line);
+  display:flex;gap:10px;z-index:100;
+}
+.bbk{
+  width:50px;height:52px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--s2);color:var(--muted);font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .2s;
+}
+.bbk:active{transform:scale(0.93);}
+.bbk.gone{visibility:hidden;}
+.bnx{
+  flex:1;height:52px;
+  background:linear-gradient(135deg,#1d4ed8,#2563eb);
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  letter-spacing:.01em;
+}
+.bnx:active{transform:scale(0.97);}
+.bnx.go{background:linear-gradient(135deg,#065f46,#0d9488);}
+
+/* ════════════════════════════
+   RESULTS — DRAMATIC
+════════════════════════════ */
+#result-scr{display:none;background:var(--bg);}
+#result-scr.on{display:block;animation:up .5s ease both;}
+
+/* screenshot tip */
+.tip{
+  margin:16px 20px 0;display:flex;align-items:center;gap:12px;
+  background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.15);
+  border-radius:12px;padding:12px 14px;
+}
+.tip p{font-size:13px;color:rgba(251,191,36,0.8);line-height:1.5;}
+.tip strong{color:var(--gold);}
+
+/* full-bleed result hero */
+.res-hero{
+  position:relative;
+  padding:40px 24px 36px;
+  overflow:hidden;text-align:center;
+  border-bottom:1px solid var(--line);
+  margin-bottom:0;
+}
+.res-hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%,rgba(29,78,216,0.45) 0%,transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 100%,rgba(167,139,250,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(45,212,191,0.08) 0%,transparent 60%);
+}
+.res-hero-grid{
+  position:absolute;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:28px 28px;
+  mask-image:radial-gradient(ellipse at center,black 40%,transparent 80%);
+}
+.res-hero *:not(.res-hero-bg,.res-hero-grid){position:relative;z-index:1;}
+.res-hosp{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;}
+.rh-cross{width:24px;height:24px;background:rgba(255,255,255,0.15);border-radius:5px;position:relative;flex-shrink:0;}
+.rh-cross::before,.rh-cross::after{content:'';position:absolute;background:#fff;border-radius:1px;top:50%;left:50%;transform:translate(-50%,-50%);}
+.rh-cross::before{width:10px;height:2px;}.rh-cross::after{width:2px;height:10px;}
+.rh-txt{text-align:left;line-height:1.2;}
+.rh-hs{font-size:9.5px;color:rgba(255,255,255,0.45);letter-spacing:.07em;text-transform:uppercase;}
+.rh-hn{font-size:12.5px;font-weight:700;color:#fff;}
+.res-eyebrow{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+.res-main-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.03em;color:#fff;line-height:.95;margin-bottom:14px;}
+
+/* ── AGE GAUGE SECTION ── */
+.age-section{padding:24px 20px 20px;background:var(--s1);border-bottom:1px solid var(--line);}
+.age-sec-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;}
+.age-gauges{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.gauge-svg{width:100%;max-width:110px;}
+.gauge-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;}
+.gauge-sub{font-size:9px;color:var(--muted);text-align:center;letter-spacing:.04em;}
+.gauge-delta{
+  font-size:11px;font-weight:700;
+  padding:2px 9px;border-radius:20px;text-align:center;
+}
+.gd-bad{background:rgba(248,113,113,0.14);color:var(--rose);}
+.gd-ok {background:rgba(52,211,153,0.12);color:var(--mint);}
+.gd-neu{background:rgba(255,255,255,0.06);color:var(--muted);}
+
+/* ── CV RISK SECTION ── */
+.cv-section{padding:20px 20px 16px;border-bottom:1px solid var(--line);}
+.cv-title{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;}
+
+/* big risk number */
+.cv-big{
+  display:flex;align-items:flex-end;gap:6px;margin-bottom:10px;
+}
+.cv-pct{
+  font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;
+}
+.cv-pct-unit{font-size:14px;font-weight:600;color:var(--muted);padding-bottom:10px;}
+.cv-label{font-size:12px;font-weight:500;color:var(--muted);line-height:1.4;max-width:140px;padding-bottom:8px;}
+
+/* gradient risk bar */
+.cv-bar-wrap{margin-bottom:12px;}
+.cv-bar-track{
+  height:10px;border-radius:5px;position:relative;overflow:visible;
+  background:linear-gradient(90deg,#34d399 0%,#fbbf24 50%,#f87171 100%);
+  margin-bottom:5px;
+}
+.cv-bar-marker{
+  position:absolute;top:-5px;width:4px;height:20px;
+  background:#fff;border-radius:2px;transform:translateX(-50%);
+  transition:left 1.2s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 8px rgba(255,255,255,0.7);left:0%;
+}
+.cv-bar-ticks{display:flex;justify-content:space-between;font-size:9.5px;color:rgba(255,255,255,0.2);}
+.risk-factors{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.rf-chip{padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;}
+.rf-bad{background:rgba(248,113,113,0.12);color:var(--rose);border:1px solid rgba(248,113,113,0.22);}
+.rf-ok {background:rgba(52,211,153,0.10);color:var(--mint);border:1px solid rgba(52,211,153,0.2);}
+
+/* ── SCREENING SECTION ── */
+.sc-section{padding:20px 20px 16px;border-bottom:1px solid var(--line);}
+.sc-title{font-size:10px;font-weight:700;color:var(--sky);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
+.sc-card{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;background:var(--s2);
+  border:1px solid var(--line);border-radius:12px;margin-bottom:8px;
+  transition:border-color .2s;
+}
+.sc-card:hover{border-color:rgba(255,255,255,0.12);}
+.sc-ico{font-size:20px;flex-shrink:0;width:28px;text-align:center;}
+.sc-info{flex:1;}
+.sc-name{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:1px;}
+.sc-freq{font-size:11.5px;color:var(--muted);}
+.sc-badge{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:20px;flex-shrink:0;}
+.scb-now{background:rgba(248,113,113,0.14);color:var(--rose);border:1px solid rgba(248,113,113,0.25);}
+.scb-soon{background:rgba(251,191,36,0.12);color:var(--gold);border:1px solid rgba(251,191,36,0.22);}
+.scb-routine{background:rgba(45,212,191,0.10);color:var(--teal);border:1px solid rgba(45,212,191,0.18);}
+
+/* ── FOOTER CARDS ── */
+.foot-cards{padding:0 20px 20px;}
+.foot-card{background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;}
+.foot-card p{font-size:11.5px;color:rgba(255,255,255,0.22);line-height:1.7;}
+
+.restart{
+  display:block;width:calc(100% - 40px);
+  margin:8px 20px 40px;padding:14px;
+  background:var(--s2);border:1.5px solid var(--line);border-radius:12px;
+  color:var(--muted);font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;
+}
+.restart:active{transform:scale(0.97);}
+
+/* ══ IRB CONSENT SCREEN ══ */
+.consent-scr-wrap{padding:24px 20px 130px;}
+.consent-head{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.consent-eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.consent-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.03em;color:#fff;line-height:1.05;margin-bottom:6px;}
+.consent-intro{font-size:12.5px;color:var(--muted);line-height:1.65;}
+.consent-sec{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin-bottom:10px;}
+.consent-sec-num{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--teal);letter-spacing:.06em;margin-right:8px;vertical-align:middle;}
+.consent-sec-h{font-size:11px;font-weight:700;color:#fff;letter-spacing:.1em;text-transform:uppercase;display:inline-block;vertical-align:middle;}
+.consent-sec p{font-size:12.5px;color:var(--muted);line-height:1.7;margin-top:8px;}
+.consent-sec strong{color:var(--text);}
+.consent-pi{font-family:'Inter',sans-serif;font-size:12px;color:var(--text);background:var(--bg);border:1px dashed rgba(45,212,191,0.25);border-radius:8px;padding:10px 12px;margin-top:10px;line-height:1.9;}
+.consent-pi .lbl{color:var(--muted);display:inline-block;width:130px;}
+.consent-pi .val{color:var(--gold);font-weight:600;}
+.bnx[disabled]{opacity:0.35;cursor:not-allowed;background:linear-gradient(135deg,#33415a,#475569);}
+
+/* hide progress on consent pre-screen */
+body.pre-consent .pbar,body.pre-consent .step-dots{visibility:hidden;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tl">
+    <div class="cross"></div>
+    <div style="line-height:1.2;">
+      <div class="ti-h">International St. Mary's Hospital</div>
+      <div class="ti-t" id="tT">My Health Profile</div>
+    </div>
+  </div>
+  <div class="ti-s" id="tS"></div>
+</div>
+<div class="pbar"><div class="pfill" id="pF"></div></div>
+<div class="step-dots" id="stepDots">
+  <div class="sdot cur" id="dot0"></div>
+  <div class="sdot" id="dot1"></div>
+  <div class="sdot" id="dot2"></div>
+  <div class="sdot" id="dot3"></div>
+  <div class="sdot" id="dot4"></div>
+</div>
+
+<!-- ════ IRB CONSENT (pre-screen) ════ -->
+<div class="scr on" id="s_consent">
+  <div class="consent-scr-wrap">
+    <div class="consent-head">
+      <div class="consent-eyebrow">Informed Consent · IRB Research</div>
+      <h1 class="consent-title">PARTICIPANT<br>INFORMATION SHEET</h1>
+      <p class="consent-intro">You are invited to participate in a research study by International St. Mary's Hospital. Please read the information below carefully before deciding whether to participate.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">1</span><span class="consent-sec-h">Purpose of the Study</span>
+      <p>This study examines healthcare experiences and cardiovascular risk profiles among American residents (active-duty service members, dependents, and civilians) living in Korea. Findings will be used for peer-reviewed academic publication.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">2</span><span class="consent-sec-h">Procedures</span>
+      <p>You will complete an anonymous online questionnaire (approximately 8 minutes) covering demographics, healthcare experience, self-reported biometrics, and lifestyle factors. After submission you will see a personalized non-diagnostic health profile estimate.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">3</span><span class="consent-sec-h">Risks &amp; Discomforts</span>
+      <p>There are no foreseeable physical, psychological, or social risks from participating. Some items may feel personal; you may skip any item or stop at any time.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">4</span><span class="consent-sec-h">Benefits</span>
+      <p>You will receive a personalized non-diagnostic health profile (heart age, brain age, 10-year cardiovascular risk estimate) and a suggested screening plan. Your participation also contributes to research on international resident health in Korea.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">5</span><span class="consent-sec-h">Confidentiality &amp; Anonymity</span>
+      <p><strong>No identifying information will be collected.</strong> We do not record your name, e-mail, phone number, IP address, military ID, or unit designation. All responses are stored anonymously and accessible only to the research team. Aggregate data may be published in academic journals or presented at conferences; individual responses cannot be traced back to you.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">6</span><span class="consent-sec-h">Voluntary Participation</span>
+      <p>Participation is entirely voluntary. You may decline to participate or withdraw at any time before submission by simply closing this page. There are no penalties or consequences for declining. Once your response is submitted it cannot be withdrawn, because it is not linked to your identity.</p>
+    </div>
+
+    <div class="consent-sec">
+      <span class="consent-sec-num">7</span><span class="consent-sec-h">Contact Information</span>
+      <p>If you have any questions about this study or your rights as a research participant, please contact:</p>
+      <div class="consent-pi">
+        <div><span class="lbl">Principal Investigator</span><span class="val">[TO BE FILLED BY PI]</span></div>
+        <div><span class="lbl">Affiliation</span><span class="val">[TO BE FILLED BY PI]</span></div>
+        <div><span class="lbl">E-mail</span><span class="val">[TO BE FILLED BY PI]</span></div>
+        <div><span class="lbl">IRB / Ethics Committee</span><span class="val">[TO BE FILLED BY PI]</span></div>
+      </div>
+    </div>
+
+    <div class="ctog" id="consentBox" onclick="tog('consent')">
+      <div class="cbox"><span class="ck">✓</span></div>
+      <div class="ctxt"><strong>I have read and understood</strong> the information above. I voluntarily agree to participate in this study and I am 18 years of age or older.<span class="req"> *</span></div>
+    </div>
+  </div>
+
+  <div class="botnav">
+    <div class="bbk gone"></div>
+    <button class="bnx" id="consentBtn" disabled onclick="consentContinue()">Continue &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ════ S0 WELCOME ════ -->
+<div class="scr" id="s0">
+  <div class="w-hero">
+    <div class="w-hero-bg"></div>
+    <div class="w-hero-grid"></div>
+    <div class="w-tag">ISMH International Cooperation Center · 2025</div>
+    <h1 class="w-title">MY HEALTH<br><span class="hl">PROFILE</span></h1>
+    <p class="w-sub">Know your heart age, brain age & vascular risk — then get a personalized screening plan.</p>
+    <div class="w-chips">
+      <span class="chip">⏱ ~8 min</span>
+      <span class="chip">🔒 Anonymous</span>
+      <span class="chip">📋 IRB Research</span>
+      <span class="chip">📸 Screenshot</span>
+    </div>
+  </div>
+
+  <div class="parts-wrap">
+    <div class="parts-title">What's Inside</div>
+    <div class="part-row">
+      <div class="part-num pn-a">A</div>
+      <div class="part-info">
+        <div class="part-name">Healthcare in Korea</div>
+        <div class="part-desc">Your experience as an American patient</div>
+      </div>
+      <span class="part-badge pb-r">Research</span>
+    </div>
+    <div class="part-row">
+      <div class="part-num pn-b">B</div>
+      <div class="part-info">
+        <div class="part-name">My Health Profile</div>
+        <div class="part-desc">Heart age · Brain age · Vascular risks</div>
+      </div>
+      <span class="part-badge pb-h">Calculator</span>
+    </div>
+    <div class="part-row">
+      <div class="part-num pn-c">C</div>
+      <div class="part-info">
+        <div class="part-name">My Screening Plan</div>
+        <div class="part-desc">What you should get & when</div>
+      </div>
+      <span class="part-badge pb-g">Results</span>
+    </div>
+  </div>
+
+  <div class="botnav">
+    <div class="bbk gone"></div>
+    <button class="bnx" onclick="go(0)">Begin Survey &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ════ S1 DEMOGRAPHICS ════ -->
+<div class="scr" id="s1">
+  <div class="scr-hero" style="background:radial-gradient(ellipse 90% 70% at 50% -20%,rgba(56,189,248,0.2) 0%,transparent 70%);margin-bottom:0;">
+    <div class="sh-eyebrow" style="color:var(--sky);">Step 1 · Profile</div>
+    <div class="sh-title">ABOUT YOU</div>
+    <div class="sh-sub">Anonymous. For research analysis only.</div>
+  </div>
+  <div class="bd" style="padding-top:24px;">
+
+    <div class="hq">
+      <div class="hq-tag">Age Group <span class="req">*</span></div>
+      <div class="hq-text">What is your age group?</div>
+      <div class="hq-opts" id="q_age">
+        <div class="hq-opt" onclick="pick(this,'age','18-29')"><div class="hq-radio"></div><span class="hq-opt-txt">18 – 29</span></div>
+        <div class="hq-opt" onclick="pick(this,'age','30-39')"><div class="hq-radio"></div><span class="hq-opt-txt">30 – 39</span></div>
+        <div class="hq-opt" onclick="pick(this,'age','40-49')"><div class="hq-radio"></div><span class="hq-opt-txt">40 – 49</span></div>
+        <div class="hq-opt" onclick="pick(this,'age','50-59')"><div class="hq-radio"></div><span class="hq-opt-txt">50 – 59</span></div>
+        <div class="hq-opt" onclick="pick(this,'age','60-69')"><div class="hq-radio"></div><span class="hq-opt-txt">60 – 69</span></div>
+        <div class="hq-opt" onclick="pick(this,'age','70+')"><div class="hq-radio"></div><span class="hq-opt-txt">70+</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Sex <span class="req">*</span></div>
+      <div class="hq-text">What is your sex?</div>
+      <div class="hq-opts" id="q_sex">
+        <div class="hq-opt" onclick="pick(this,'sex','male')"><div class="hq-radio"></div><span class="hq-opt-txt">Male</span></div>
+        <div class="hq-opt" onclick="pick(this,'sex','female')"><div class="hq-radio"></div><span class="hq-opt-txt">Female</span></div>
+        <div class="hq-opt" onclick="pick(this,'sex','pns')"><div class="hq-radio"></div><span class="hq-opt-txt">Prefer not to say</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Time in Korea <span class="req">*</span></div>
+      <div class="hq-text">How long have you lived in Korea?</div>
+      <div class="hq-opts" id="q_dur">
+        <div class="hq-opt" onclick="pick(this,'dur','<1y')"><div class="hq-radio"></div><span class="hq-opt-txt">Less than 1 year</span></div>
+        <div class="hq-opt" onclick="pick(this,'dur','1-3y')"><div class="hq-radio"></div><span class="hq-opt-txt">1 – 3 years</span></div>
+        <div class="hq-opt" onclick="pick(this,'dur','3-5y')"><div class="hq-radio"></div><span class="hq-opt-txt">3 – 5 years</span></div>
+        <div class="hq-opt" onclick="pick(this,'dur','5y+')"><div class="hq-radio"></div><span class="hq-opt-txt">More than 5 years</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Insurance</div>
+      <div class="hq-text">Primary health insurance in Korea?</div>
+      <div class="hq-opts" id="q_ins">
+        <div class="hq-opt" onclick="pick(this,'ins','nhis')"><div class="hq-radio"></div><span class="hq-opt-txt">Korean NHIS</span></div>
+        <div class="hq-opt" onclick="pick(this,'ins','tricare')"><div class="hq-radio"></div><span class="hq-opt-txt">TRICARE (Military)</span></div>
+        <div class="hq-opt" onclick="pick(this,'ins','private')"><div class="hq-radio"></div><span class="hq-opt-txt">Private / International</span></div>
+        <div class="hq-opt" onclick="pick(this,'ins','none')"><div class="hq-radio"></div><span class="hq-opt-txt">No insurance</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="botnav">
+    <button class="bbk" onclick="bk(1)">←</button>
+    <button class="bnx" onclick="go(1)">Continue &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ════ S2 PART A: HEALTHCARE EXPERIENCE ════ -->
+<div class="scr" id="s2">
+  <div class="scr-hero hero-A">
+    <div class="scr-hero-bg"></div>
+    <div class="sh-eyebrow">Part A · Research Survey</div>
+    <div class="sh-title">HEALTHCARE<br>IN KOREA</div>
+    <div class="sh-sub">Rate your experience as an American patient here.</div>
+  </div>
+  <div class="bd" style="padding-top:24px;">
+
+    <div class="lk-intro">
+      <h4>Instructions</h4>
+      <p>Rate 1 (Strongly Disagree) to 5 (Strongly Agree). Used for peer-reviewed academic research.</p>
+    </div>
+
+    <div id="lk-A-container"></div>
+
+    <div class="hq" style="margin-top:20px;">
+      <div class="hq-tag">Delayed Care</div>
+      <div class="hq-text">Have you ever delayed or avoided medical care in Korea?</div>
+      <div class="hq-opts" id="q_delay">
+        <div class="hq-opt" onclick="pick(this,'delay','never')"><div class="hq-radio"></div><span class="hq-opt-txt">Never</span></div>
+        <div class="hq-opt" onclick="pick(this,'delay','rarely')"><div class="hq-radio"></div><span class="hq-opt-txt">Rarely</span></div>
+        <div class="hq-opt" onclick="pick(this,'delay','sometimes')"><div class="hq-radio"></div><span class="hq-opt-txt">Sometimes</span></div>
+        <div class="hq-opt" onclick="pick(this,'delay','often')"><div class="hq-radio"></div><span class="hq-opt-txt">Often</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Overall Satisfaction</div>
+      <div class="hq-text">Compared to the U.S., Korean healthcare is...</div>
+      <div class="hq-opts" id="q_sat">
+        <div class="hq-opt" onclick="pick(this,'sat','much_better')"><div class="hq-radio"></div><span class="hq-opt-txt">Much better</span></div>
+        <div class="hq-opt" onclick="pick(this,'sat','better')"><div class="hq-radio"></div><span class="hq-opt-txt">Somewhat better</span></div>
+        <div class="hq-opt" onclick="pick(this,'sat','same')"><div class="hq-radio"></div><span class="hq-opt-txt">About the same</span></div>
+        <div class="hq-opt" onclick="pick(this,'sat','worse')"><div class="hq-radio"></div><span class="hq-opt-txt">Somewhat worse</span></div>
+        <div class="hq-opt" onclick="pick(this,'sat','much_worse')"><div class="hq-radio"></div><span class="hq-opt-txt">Much worse</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Open Response (Optional)</div>
+      <div class="hq-text">Biggest challenge accessing healthcare in Korea?</div>
+      <textarea class="form-ta" id="q_challenge" placeholder="e.g. Language barrier, insurance confusion, finding specialists..."></textarea>
+    </div>
+  </div>
+  <div class="botnav">
+    <button class="bbk" onclick="bk(2)">←</button>
+    <button class="bnx" onclick="go(2)">Part B: Health Profile &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ════ S3 PART B: BIOMETRICS ════ -->
+<div class="scr" id="s3">
+  <div class="scr-hero hero-B">
+    <div class="scr-hero-bg"></div>
+    <div class="sh-eyebrow">Part B · Your Numbers</div>
+    <div class="sh-title">YOUR VITAL<br>STATS</div>
+    <div class="sh-sub">We'll use these to calculate your heart and brain age.</div>
+  </div>
+  <div class="bd" style="padding-top:24px;">
+
+    <div class="hq">
+      <div class="hq-tag">Exact Age <span class="req">*</span></div>
+      <div class="hq-text">How old are you? (for precise calculations)</div>
+      <div class="num-row">
+        <div class="num-wrap"><input class="num-inp" id="b_age" type="number" min="18" max="99" placeholder="45" inputmode="numeric"><span class="num-unit">YRS</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Height & Weight <span class="req">*</span></div>
+      <div class="hq-text">Enter measurements to calculate BMI.</div>
+      <div class="unit-tog">
+        <button class="utb on" id="uUS2" onclick="swUnit('us')">🇺🇸 lbs / ft·in</button>
+        <button class="utb" id="uMT2" onclick="swUnit('metric')">🌍 kg / cm</button>
+      </div>
+      <div id="usF">
+        <div class="bmi-row2" style="margin-bottom:8px;">
+          <div class="num-wrap"><input class="num-inp" id="b_ft" type="number" min="3" max="8" placeholder="5" inputmode="decimal"><span class="num-unit">FT</span></div>
+          <div class="num-wrap"><input class="num-inp" id="b_in" type="number" min="0" max="11" placeholder="10" inputmode="decimal"><span class="num-unit">IN</span></div>
+        </div>
+        <div class="num-wrap"><input class="num-inp" id="b_lb" type="number" min="50" max="700" placeholder="180" inputmode="decimal"><span class="num-unit">LBS</span></div>
+      </div>
+      <div id="mtF" style="display:none;">
+        <div class="bmi-row2">
+          <div class="num-wrap"><input class="num-inp" id="b_cm" type="number" min="100" max="250" placeholder="178" inputmode="decimal"><span class="num-unit">CM</span></div>
+          <div class="num-wrap"><input class="num-inp" id="b_kg" type="number" min="20" max="300" placeholder="82" inputmode="decimal"><span class="num-unit">KG</span></div>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcBMI2()">🧮 Calculate BMI</button>
+      <div class="bmi-result-mini" id="bmiMini"></div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Blood Pressure</div>
+      <div class="hq-text">Your usual systolic (top number)?</div>
+      <div class="hq-opts" id="q_sbp">
+        <div class="hq-opt" onclick="pick(this,'sbp','<120')"><div class="hq-radio"></div><span class="hq-opt-txt">Below 120 — Normal</span></div>
+        <div class="hq-opt" onclick="pick(this,'sbp','120-129')"><div class="hq-radio"></div><span class="hq-opt-txt">120–129 — Elevated</span></div>
+        <div class="hq-opt" onclick="pick(this,'sbp','130-139')"><div class="hq-radio"></div><span class="hq-opt-txt">130–139 — High Stage 1</span></div>
+        <div class="hq-opt" onclick="pick(this,'sbp','140+')"><div class="hq-radio"></div><span class="hq-opt-txt">140+ — High Stage 2</span></div>
+        <div class="hq-opt" onclick="pick(this,'sbp','unknown')"><div class="hq-radio"></div><span class="hq-opt-txt">I don't know</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Total Cholesterol</div>
+      <div class="hq-text">Your total cholesterol level?</div>
+      <div class="hq-opts" id="q_chol">
+        <div class="hq-opt" onclick="pick(this,'chol','<200')"><div class="hq-radio"></div><span class="hq-opt-txt">Below 200 mg/dL — Desirable</span></div>
+        <div class="hq-opt" onclick="pick(this,'chol','200-239')"><div class="hq-radio"></div><span class="hq-opt-txt">200–239 mg/dL — Borderline High</span></div>
+        <div class="hq-opt" onclick="pick(this,'chol','240+')"><div class="hq-radio"></div><span class="hq-opt-txt">240+ mg/dL — High</span></div>
+        <div class="hq-opt" onclick="pick(this,'chol','unknown')"><div class="hq-radio"></div><span class="hq-opt-txt">I don't know</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="botnav">
+    <button class="bbk" onclick="bk(3)">←</button>
+    <button class="bnx" onclick="go(3)">Continue &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ════ S4 RISK FACTORS ════ -->
+<div class="scr" id="s4">
+  <div class="scr-hero hero-C">
+    <div class="scr-hero-bg"></div>
+    <div class="sh-eyebrow">Part B · Risk Factors</div>
+    <div class="sh-title">YOUR RISK<br>FACTORS</div>
+    <div class="sh-sub">Honest answers give you the most accurate result. Everything is anonymous.</div>
+  </div>
+  <div class="bd" style="padding-top:24px;">
+    <div id="rf-container"></div>
+
+    <div class="hq">
+      <div class="hq-tag">Physical Activity</div>
+      <div class="hq-text">How much do you exercise per week?</div>
+      <div class="hq-opts" id="q_ex">
+        <div class="hq-opt" onclick="pick(this,'ex','150+')"><div class="hq-radio"></div><span class="hq-opt-txt">150+ min/week — Meets guidelines</span></div>
+        <div class="hq-opt" onclick="pick(this,'ex','75-149')"><div class="hq-radio"></div><span class="hq-opt-txt">75–149 min/week</span></div>
+        <div class="hq-opt" onclick="pick(this,'ex','<75')"><div class="hq-radio"></div><span class="hq-opt-txt">Less than 75 min/week</span></div>
+        <div class="hq-opt" onclick="pick(this,'ex','none')"><div class="hq-radio"></div><span class="hq-opt-txt">Little to none</span></div>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Family History</div>
+      <div class="hq-text">Has a parent or sibling had a heart attack or stroke before age 65?</div>
+      <div class="yn">
+        <button class="ynb" onclick="ynPick('fhx','yes',this)">YES</button>
+        <button class="ynb" onclick="ynPick('fhx','no',this)">NO</button>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Atrial Fibrillation (AFib)</div>
+      <div class="hq-text">Ever diagnosed with AFib or irregular heartbeat?</div>
+      <div class="yn">
+        <button class="ynb" onclick="ynPick('afib','yes',this)">YES</button>
+        <button class="ynb" onclick="ynPick('afib','no',this)">NO</button>
+      </div>
+    </div>
+
+    <div class="hq">
+      <div class="hq-tag">Stress Level</div>
+      <div class="hq-text">Average daily stress level?</div>
+      <div class="hq-opts" id="q_stress">
+        <div class="hq-opt" onclick="pick(this,'stress','low')"><div class="hq-radio"></div><span class="hq-opt-txt">Low — rarely stressed</span></div>
+        <div class="hq-opt" onclick="pick(this,'stress','mod')"><div class="hq-radio"></div><span class="hq-opt-txt">Moderate — manageable</span></div>
+        <div class="hq-opt" onclick="pick(this,'stress','high')"><div class="hq-radio"></div><span class="hq-opt-txt">High — frequently stressed</span></div>
+        <div class="hq-opt" onclick="pick(this,'stress','very_high')"><div class="hq-radio"></div><span class="hq-opt-txt">Very high — chronic stress</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="botnav">
+    <button class="bbk" onclick="bk(4)">←</button>
+    <button class="bnx go" onclick="go(4)">See My Results &nbsp;🫀</button>
+  </div>
+</div>
+
+<!-- ════ RESULTS ════ -->
+<div id="result-scr">
+
+  <div class="tip">
+    <span style="font-size:22px;flex-shrink:0;">📸</span>
+    <p><strong>Save your results!</strong> Take a screenshot to keep your personal health profile.</p>
+  </div>
+
+  <!-- RESULT HERO -->
+  <div class="res-hero">
+    <div class="res-hero-bg"></div>
+    <div class="res-hero-grid"></div>
+    <div class="res-hosp">
+      <div class="rh-cross"></div>
+      <div class="rh-txt">
+        <div class="rh-hs">International St. Mary's Hospital</div>
+        <div class="rh-hn">My Personal Health Profile</div>
+      </div>
+    </div>
+    <div class="res-eyebrow">Personalized Health Assessment</div>
+    <div class="res-main-title" id="resMainTitle">YOUR RESULTS<br>ARE READY</div>
+  </div>
+
+  <!-- AGE GAUGES -->
+  <div class="age-section">
+    <div class="age-sec-title">Biological Age Estimates</div>
+    <div class="age-gauges">
+      <!-- Actual Age -->
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 110 80" id="gaugeActual">
+          <defs>
+            <linearGradient id="gActual" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#2dd4bf"/>
+            </linearGradient>
+          </defs>
+          <path d="M 10 70 A 50 50 0 0 1 100 70" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/>
+          <path d="M 10 70 A 50 50 0 0 1 100 70" fill="none" stroke="url(#gActual)" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="0"/>
+          <text x="55" y="62" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="26" id="gActualNum">--</text>
+          <text x="55" y="75" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="Inter,sans-serif" font-size="7" font-weight="600" letter-spacing="0.5">ACTUAL</text>
+        </svg>
+        <div class="gauge-label" style="color:var(--sky);">Your Age</div>
+      </div>
+      <!-- Heart Age -->
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 110 80" id="gaugeHeart">
+          <defs>
+            <linearGradient id="gHeart" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#f87171" id="gHeartS"/>
+              <stop offset="100%" stop-color="#fbbf24" id="gHeartE"/>
+            </linearGradient>
+          </defs>
+          <path d="M 10 70 A 50 50 0 0 1 100 70" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/>
+          <path d="M 10 70 A 50 50 0 0 1 100 70" fill="none" stroke="url(#gHeart)" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="0" id="gHeartArc"/>
+          <text x="55" y="62" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="26" id="gHeartNum">--</text>
+          <text x="55" y="75" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="Inter,sans-serif" font-size="7" font-weight="600" letter-spacing="0.5">HEART</text>
+        </svg>
+        <div class="gauge-label" style="color:var(--rose);">Heart Age</div>
+        <div class="gauge-delta" id="gHeartDelta">—</div>
+        <div class="gauge-sub">Framingham</div>
+      </div>
+      <!-- Brain Age -->
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 110 80" id="gaugeBrain">
+          <defs>
+            <linearGradient id="gBrain" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#a78bfa" id="gBrainS"/>
+              <stop offset="100%" stop-color="#ec4899" id="gBrainE"/>
+            </linearGradient>
+          </defs>
+          <path d="M 10 70 A 50 50 0 0 1 100 70" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/>
+          <path d="M 10 70 A 50 50 0 0 1 100 70" fill="none" stroke="url(#gBrain)" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="0" id="gBrainArc"/>
+          <text x="55" y="62" text-anchor="middle" fill="white" font-family="Bebas Neue,sans-serif" font-size="26" id="gBrainNum">--</text>
+          <text x="55" y="75" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="Inter,sans-serif" font-size="7" font-weight="600" letter-spacing="0.5">BRAIN</text>
+        </svg>
+        <div class="gauge-label" style="color:var(--violet);">Brain Age</div>
+        <div class="gauge-delta" id="gBrainDelta">—</div>
+        <div class="gauge-sub">Stroke risk</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CV RISK -->
+  <div class="cv-section">
+    <div class="cv-title">🩸 10-Year Cardiovascular Risk</div>
+    <div class="cv-big">
+      <div class="cv-pct" id="rCVnum" style="color:var(--mint);">—</div>
+      <div class="cv-pct-unit">%</div>
+      <div class="cv-label" id="rCVlabel">10-year cardiovascular event risk (Framingham)</div>
+    </div>
+    <div class="cv-bar-wrap">
+      <div class="cv-bar-track">
+        <div class="cv-bar-marker" id="cvMarker"></div>
+      </div>
+      <div class="cv-bar-ticks"><span>Low &lt;5%</span><span>Moderate 5–10%</span><span>High &gt;10%</span></div>
+    </div>
+    <div class="risk-factors" id="rFactors"></div>
+  </div>
+
+  <!-- SCREENING PLAN -->
+  <div class="sc-section">
+    <div class="sc-title">📋 Your Personalized Screening Plan</div>
+    <div id="rScreenings"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="foot-cards">
+    <div class="foot-card">
+      <span style="font-size:16px;flex-shrink:0;">⚠</span>
+      <p>Estimates based on validated models (Framingham Risk Score, AHA guidelines). For informational purposes only — not a medical diagnosis. Consult a physician for clinical evaluation.</p>
+    </div>
+    <div class="foot-card">
+      <span style="font-size:16px;flex-shrink:0;">🔬</span>
+      <p>Anonymous responses contribute to peer-reviewed research on cardiovascular health among international residents in Korea. PI: President, International St. Mary's Hospital. IRB Approval Pending.</p>
+    </div>
+  </div>
+
+  <button class="restart" onclick="resetAll()">← Start Over</button>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════
+const S={age:null,sex:null,dur:null,ins:null,sbp:null,chol:null,delay:null,sat:null,smoke:null,dm:null,htn:null,lipid:null,fhx:null,afib:null,prev_cv:null,ex:null,stress:null,bmi:null,exactAge:null,lkA:{},challenge:'',consent_v1:null};
+const C={consent:false};
+document.body.classList.add('pre-consent');
+let bmiUnit='us';
+const IDS=['s0','s1','s2','s3','s4'];
+const TITLES=['My Health Profile','About You','Healthcare in Korea','Your Vital Stats','Risk Factors'];
+
+const lkAItems=[
+  {id:'la1',t:'Language barriers make it difficult for me to seek medical care in Korea.'},
+  {id:'la2',t:'I find it difficult to navigate the Korean healthcare system.'},
+  {id:'la3',t:'My insurance coverage in Korea is unclear or insufficient.'},
+  {id:'la4',t:'I feel culturally comfortable with Korean medical providers.'},
+  {id:'la5',t:'The quality of care I receive in Korea meets my expectations.'},
+  {id:'la6',t:'Cost of care has been a barrier for me in Korea.'},
+];
+const LK=['SD','D','N','A','SA'];
+
+const rfItems=[
+  {id:'smoke',label:'Smoking',q:'Do you currently smoke or use tobacco products?',hint:'Cigarettes, cigars, e-cigarettes, smokeless tobacco.'},
+  {id:'dm',label:'Diabetes',q:'Have you been diagnosed with diabetes or pre-diabetes?',hint:'Type 1, Type 2, or gestational diabetes.'},
+  {id:'htn',label:'Hypertension',q:'Have you been diagnosed with high blood pressure?',hint:'Or currently taking blood pressure medication.'},
+  {id:'lipid',label:'High Cholesterol',q:'Have you been told your cholesterol is high?',hint:'Or taking statins / cholesterol-lowering medication.'},
+  {id:'prev_cv',label:'Prior Heart / Stroke Event',q:'Have you ever had a heart attack, stroke, or other cardiovascular event?',hint:''},
+];
+
+// BUILD DYNAMIC
+function buildLikertA(){
+  const c=document.getElementById('lk-A-container');
+  lkAItems.forEach((item,idx)=>{
+    const d=document.createElement('div');
+    d.className='lk-item';d.id='lki-'+item.id;
+    d.innerHTML=`<div class="lk-stmt"><span class="idx">${idx+1}.</span>${item.t}</div>
+    <div class="lk-scale">${LK.map((l,i)=>`<div class="lk-btn" onclick="lkPick('${item.id}',${i+1},this)"><div class="lk-dot"></div><span class="lk-lbl">${l}</span></div>`).join('')}</div>
+    <div class="lk-legend"><span>Strongly Disagree</span><span>Strongly Agree</span></div>`;
+    c.appendChild(d);
+  });
+}
+function buildRF(){
+  const c=document.getElementById('rf-container');
+  rfItems.forEach(item=>{
+    const d=document.createElement('div');
+    d.className='hq';d.id='rf-'+item.id;
+    d.innerHTML=`<div class="hq-tag">${item.label}</div><div class="hq-text">${item.q}</div>${item.hint?`<div class="hq-hint">${item.hint}</div>`:''}
+    <div class="yn"><button class="ynb" onclick="ynPick('${item.id}','yes',this)">YES</button><button class="ynb" onclick="ynPick('${item.id}','no',this)">NO</button></div>`;
+    c.appendChild(d);
+  });
+}
+buildLikertA();buildRF();
+
+// DOTS
+function updateDots(step){
+  for(let i=0;i<5;i++){
+    const d=document.getElementById('dot'+i);
+    d.className='sdot'+(i<step?' done':i===step?' cur':'');
+  }
+}
+
+// UI
+function ui(i){
+  document.getElementById('tT').textContent=TITLES[i]||'Your Results';
+  document.getElementById('tS').textContent=(i>0&&i<5)?`${i}/4`:'';
+  document.getElementById('pF').style.width=(i/5*100)+'%';
+  updateDots(i);
+}
+
+window.tog=id=>{
+  C[id]=!C[id];
+  if(id==='consent'){
+    document.getElementById('consentBox').classList.toggle('on',C[id]);
+    document.getElementById('consentBtn').disabled=!C[id];
+  }else{
+    document.getElementById(id).classList.toggle('on',C[id]);
+  }
+};
+window.consentContinue=()=>{
+  if(!C.consent){return;}
+  S.consent_v1='yes';
+  document.body.classList.remove('pre-consent');
+  document.getElementById('s_consent').classList.remove('on');
+  document.getElementById('s0').classList.add('on');
+  ui(0);window.scrollTo(0,0);
+};
+window.pick=(el,n,v)=>{document.querySelectorAll(`#q_${n} .hq-opt`).forEach(o=>o.classList.remove('on'));el.classList.add('on');S[n]=v;};
+window.ynPick=(n,v,btn)=>{
+  const par=btn.closest('.hq,[id^="rf-"]');
+  if(par){par.querySelectorAll('.ynb').forEach(b=>b.classList.remove('y','n'));}
+  btn.classList.add(v==='yes'?'y':'n');S[n]=v;
+};
+window.lkPick=(id,val,btn)=>{
+  document.getElementById('lki-'+id).querySelectorAll('.lk-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');document.getElementById('lki-'+id).classList.add('done');
+  S.lkA[id]=val;
+};
+
+// BMI
+window.swUnit=m=>{
+  bmiUnit=m;
+  document.getElementById('usF').style.display=m==='us'?'':'none';
+  document.getElementById('mtF').style.display=m==='metric'?'':'none';
+  document.getElementById('uUS2').classList.toggle('on',m==='us');
+  document.getElementById('uMT2').classList.toggle('on',m==='metric');
+  document.getElementById('bmiMini').style.display='none';
+};
+window.calcBMI2=()=>{
+  let bmi;
+  if(bmiUnit==='us'){
+    const ft=parseFloat(document.getElementById('b_ft').value)||0;
+    const ins=parseFloat(document.getElementById('b_in').value)||0;
+    const lb=parseFloat(document.getElementById('b_lb').value)||0;
+    if((!ft&&!ins)||!lb){alert('Please enter height and weight.');return;}
+    const ti=(ft*12)+ins;bmi=(lb*703)/(ti*ti);
+  }else{
+    const cm=parseFloat(document.getElementById('b_cm').value)||0;
+    const kg=parseFloat(document.getElementById('b_kg').value)||0;
+    if(!cm||!kg){alert('Please enter height and weight.');return;}
+    bmi=kg/((cm/100)**2);
+  }
+  S.bmi=Math.round(bmi*10)/10;
+  const el=document.getElementById('bmiMini');el.style.display='block';
+  let cat,col;
+  if(S.bmi<18.5){cat='Underweight';col='#38bdf8';}
+  else if(S.bmi<25){cat='Normal weight';col='#34d399';}
+  else if(S.bmi<30){cat='Overweight';col='#fbbf24';}
+  else if(S.bmi<35){cat='Obese I–II';col='#fb923c';}
+  else{cat='Obese III';col='#f87171';}
+  el.innerHTML=`<span class="bv" style="color:${col};">${S.bmi.toFixed(1)}</span><span class="bc" style="color:${col};">${cat}</span>`;
+};
+
+// NAVIGATION
+window.go=from=>{
+  if(from===1&&(!S.age||!S.sex||!S.dur)){alert('Please answer the required questions (*).');return;}
+  if(from===3){
+    const age=parseFloat(document.getElementById('b_age').value);
+    if(!age||age<18||age>99){alert('Please enter your age.');return;}
+    S.exactAge=age;
+  }
+  if(from===4){
+    IDS.forEach(id=>document.getElementById(id).classList.remove('on'));
+    document.getElementById('pF').style.width='100%';
+    document.getElementById('tT').textContent='My Results';
+    document.getElementById('tS').textContent='';
+    updateDots(5);
+    document.getElementById('result-scr').classList.add('on');
+    window.scrollTo(0,0);
+    renderResults();
+    return;
+  }
+  document.getElementById(IDS[from]).classList.remove('on');
+  document.getElementById(IDS[from+1]).classList.add('on');
+  ui(from+1);window.scrollTo(0,0);
+};
+window.bk=from=>{
+  document.getElementById(IDS[from]).classList.remove('on');
+  document.getElementById(IDS[from-1]).classList.add('on');
+  ui(from-1);window.scrollTo(0,0);
+};
+
+
+// ════════════════════════════════════════════════
+//  GOOGLE SHEETS CONNECTION
+//  Replace URL below with your Apps Script Web App URL
+// ════════════════════════════════════════════════
+// 배포 후 발급된 Apps Script Web App URL 로 교체하세요
+const GOOGLE_SCRIPT_URL = '__PASTE_YOUR_DEPLOYED_GAS_WEB_APP_URL_HERE__';
+
+async function sendToSheets(payload, attempts=3) {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf('__PASTE') === 0) {
+    console.warn('[ISMH] GOOGLE_SCRIPT_URL not configured. Payload below:');
+    console.log(JSON.stringify(payload, null, 2));
+    return { status: 'not_configured' };
+  }
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      console.log('[ISMH] Sent (attempt ' + i + ').');
+      return { status: 'ok' };
+    } catch (err) {
+      console.warn('[ISMH] Attempt ' + i + ' failed:', err);
+      if (i === attempts) {
+        alert('Your response could not be submitted due to a network issue. Please re-open the page when connection is available, or notify the on-site coordinator.');
+        return { status: 'error', message: String(err) };
+      }
+      await new Promise(r => setTimeout(r, 800 * i));
+    }
+  }
+}
+
+// CALCULATIONS
+function calcHeartAge(age,sex,sbp,chol,smoke,dm,htn){
+  let sc=0;const male=sex==='male';
+  if(age<35)sc+=0;else if(age<40)sc+=2;else if(age<45)sc+=male?5:4;else if(age<50)sc+=male?6:5;else if(age<55)sc+=male?8:7;else if(age<60)sc+=male?10:8;else if(age<65)sc+=male?11:9;else if(age<70)sc+=male?12:10;else sc+=male?14:12;
+  if(chol==='240+')sc+=3;else if(chol==='200-239')sc+=1;
+  if(sbp==='140+')sc+=3;else if(sbp==='130-139')sc+=2;else if(sbp==='120-129')sc+=1;
+  if(smoke==='yes')sc+=male?4:3;
+  if(dm==='yes')sc+=male?3:4;
+  const cv10=male?Math.min(30,Math.max(1,sc*1.5)):Math.min(24,Math.max(1,sc*1.2));
+  const exp=Math.max(0,age-30)*0.3;
+  const excess=Math.max(0,sc-exp);
+  const hAge=Math.round(Math.min(age+20,age+excess*2.5));
+  return{heartAge:Math.max(age-5,hAge),cv10yr:cv10};
+}
+function calcBrainAge(age,sex,sbp,smoke,dm,afib,fhx,stress){
+  let r=0;
+  if(sbp==='140+')r+=8;else if(sbp==='130-139')r+=4;else if(sbp==='120-129')r+=1;
+  if(smoke==='yes')r+=5;if(dm==='yes')r+=4;if(afib==='yes')r+=7;if(fhx==='yes')r+=3;
+  if(stress==='very_high')r+=3;else if(stress==='high')r+=1;
+  return Math.max(age-3,Math.round(Math.min(age+18,age+r*0.9)));
+}
+
+// GAUGE animation
+function animGauge(arcId,numId,targetAge,maxAge,delay){
+  const arc=document.getElementById(arcId);
+  const num=document.getElementById(numId);
+  const total=157; // stroke-dasharray = π * r ≈ π * 50 ≈ 157
+  const pct=Math.min(1,Math.max(0,(targetAge-10)/(maxAge-10)));
+  const offset=total-(total*pct);
+  num.textContent='--';
+  setTimeout(()=>{
+    arc.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)';
+    arc.style.strokeDashoffset=offset;
+    // count up number
+    let cur=10,step=(targetAge-10)/40;
+    const iv=setInterval(()=>{
+      cur=Math.min(targetAge,cur+step);
+      num.textContent=Math.round(cur);
+      if(cur>=targetAge)clearInterval(iv);
+    },30);
+  },delay);
+}
+
+// RENDER
+function renderResults(){
+  const age=S.exactAge||45,sex=S.sex||'male',sbp=S.sbp||'unknown',chol=S.chol||'unknown';
+  const smoke=S.smoke||'no',dm=S.dm||'no',htn=S.htn||'no',lipid=S.lipid||'no';
+  const afib=S.afib||'no',fhx=S.fhx||'no',prev=S.prev_cv||'no',ex=S.ex||'150+',stress=S.stress||'mod';
+  const bmi=S.bmi;
+
+  const{heartAge,cv10yr}=calcHeartAge(age,sex,sbp,chol,smoke,dm,htn);
+  const brainAge=calcBrainAge(age,sex,sbp,smoke,dm,afib,fhx,stress);
+
+  // Main title
+  const maxAge=Math.max(heartAge,brainAge);
+  const titleBad=maxAge-age>=8;
+  const titleMod=maxAge-age>=3;
+  document.getElementById('resMainTitle').textContent=
+    titleBad?'ATTENTION:\nACT NOW':titleMod?'SOME RISKS\nDETECTED':'LOOKING\nGOOD';
+
+  // Gauges
+  document.getElementById('gActualNum').textContent=age;
+  animGauge('gHeartArc','gHeartNum',heartAge,Math.max(90,heartAge+10),300);
+  animGauge('gBrainArc','gBrainNum',brainAge,Math.max(90,brainAge+10),500);
+
+  // Deltas
+  function setDelta(id,diff){
+    const el=document.getElementById(id);
+    if(diff>2){el.textContent=`+${diff} yrs`;el.className='gauge-delta gd-bad';}
+    else if(diff<-2){el.textContent=`${diff} yrs`;el.className='gauge-delta gd-ok';}
+    else{el.textContent='On track';el.className='gauge-delta gd-neu';}
+  }
+  setDelta('gHeartDelta',heartAge-age);
+  setDelta('gBrainDelta',brainAge-age);
+
+  // CV risk
+  const cvColor=cv10yr<5?'#34d399':cv10yr<10?'#fbbf24':'#f87171';
+  const cvEl=document.getElementById('rCVnum');
+  cvEl.textContent=cv10yr.toFixed(0);cvEl.style.color=cvColor;
+  document.getElementById('rCVlabel').style.color=cvColor;
+  const markerPct=Math.min(100,(cv10yr/20)*100);
+  setTimeout(()=>document.getElementById('cvMarker').style.left=markerPct+'%',400);
+
+  // Risk chips
+  const facs=[];
+  if(smoke==='yes')facs.push({t:'Smoker',b:true});
+  if(dm==='yes')facs.push({t:'Diabetes',b:true});
+  if(htn==='yes'||sbp==='140+')facs.push({t:'Hypertension',b:true});
+  if(lipid==='yes'||chol==='240+')facs.push({t:'High Cholesterol',b:true});
+  if(bmi&&bmi>=30)facs.push({t:`BMI ${bmi}`,b:true});
+  if(afib==='yes')facs.push({t:'AFib',b:true});
+  if(fhx==='yes')facs.push({t:'Family Hx',b:true});
+  if(prev==='yes')facs.push({t:'Prior CV Event',b:true});
+  if(ex==='150+')facs.push({t:'Active',b:false});
+  if(ex==='none')facs.push({t:'Sedentary',b:true});
+  document.getElementById('rFactors').innerHTML=facs.map(f=>`<span class="rf-chip ${f.b?'rf-bad':'rf-ok'}">${f.t}</span>`).join('');
+
+  // Screening plan
+  const hi=cv10yr>=10||prev==='yes'||afib==='yes'||heartAge-age>=8;
+  const mo=cv10yr>=5||heartAge-age>=4||brainAge-age>=6;
+  const sc=[];
+  sc.push({ico:'🩺',n:'Comprehensive Physical Exam',f:'Every year',b:'routine'});
+  sc.push({ico:'🧪',n:'Full Blood Panel (lipids, glucose, CBC)',f:'Every year',b:'routine'});
+  if(htn==='yes'||sbp==='130-139'||sbp==='140+')sc.push({ico:'💊',n:'Blood Pressure Monitoring',f:'Every 3–6 months',b:'now'});
+  else sc.push({ico:'💊',n:'Blood Pressure Check',f:'Every year',b:'routine'});
+  if(hi)sc.push({ico:'❤️',n:'Cardiac Evaluation (ECG + Echo)',f:'Every 1–2 years',b:'now'});
+  else if(mo||age>=40)sc.push({ico:'❤️',n:'Resting ECG',f:'Every 2 years',b:'soon'});
+  if(brainAge-age>=6||afib==='yes'||fhx==='yes')sc.push({ico:'🧠',n:'Brain MRI / Carotid Ultrasound',f:'Every 2–3 years',b:'now'});
+  else if(age>=50||mo)sc.push({ico:'🧠',n:'Carotid Ultrasound',f:'Every 3 years',b:'soon'});
+  if(dm==='yes')sc.push({ico:'🩸',n:'HbA1c + Kidney Function',f:'Every 6 months',b:'now'});
+  else if((bmi&&bmi>=25)||fhx==='yes'||age>=35)sc.push({ico:'🩸',n:'Fasting Glucose / HbA1c',f:'Every 1–2 years',b:'soon'});
+  if(age>=45)sc.push({ico:'🔬',n:'Colorectal Screening',f:'Every 5 years',b:'routine'});
+  if(sex==='female'&&age>=40)sc.push({ico:'🩷',n:'Mammogram + Breast Ultrasound',f:'Every 1–2 years',b:'routine'});
+  if(sex==='female'&&age>=21)sc.push({ico:'🩷',n:'Pap Smear + HPV Test',f:'Every 2–3 years',b:'routine'});
+  if(sex==='male'&&age>=50)sc.push({ico:'🔵',n:'PSA Test',f:'Annually',b:'routine'});
+  if(age>=40)sc.push({ico:'👁️',n:'Vision + Eye Pressure',f:'Every 1–2 years',b:'routine'});
+  if(smoke==='yes')sc.push({ico:'🫁',n:'Low-Dose Chest CT (Lung)',f:'Annually',b:'now'});
+  if(sex==='female'&&age>=50)sc.push({ico:'🦴',n:'Bone Density Scan (DEXA)',f:'Every 2 years',b:'soon'});
+
+  const bm={now:'Now',soon:'Soon',routine:'Routine'};
+  const bc={now:'scb-now',soon:'scb-soon',routine:'scb-routine'};
+  document.getElementById('rScreenings').innerHTML=sc.map(s=>`
+    <div class="sc-card">
+      <div class="sc-ico">${s.ico}</div>
+      <div class="sc-info"><div class="sc-name">${s.n}</div><div class="sc-freq">${s.f}</div></div>
+      <span class="sc-badge ${bc[s.b]}">${bm[s.b]}</span>
+    </div>`).join('');
+
+  // ── AUTO-SEND TO GOOGLE SHEETS ──
+  const payload = {
+    consent_v1: S.consent_v1 || 'yes',
+    age:       S.age,      sex:     S.sex,      dur:      S.dur,
+    ins:       S.ins,      lkA:     S.lkA,      delay:    S.delay,
+    sat:       S.sat,      challenge: document.getElementById('q_challenge')?.value || '',
+    exactAge:  age,        bmi:     bmi,         sbp:      sbp,
+    chol:      chol,       smoke:   smoke,        dm:       dm,
+    htn:       htn,        lipid:   lipid,        prev_cv:  prev,
+    ex:        ex,         fhx:     fhx,          afib:     afib,
+    stress:    stress,
+    calc_heartAge: heartAge,
+    calc_brainAge: brainAge,
+    calc_cv10yr:   parseFloat(cv10yr.toFixed(1)),
+  };
+  sendToSheets(payload);
+}
+
+// RESET
+window.resetAll=()=>{
+  Object.keys(S).forEach(k=>S[k]=null);S.lkA={};S.consent_v1=null;
+  C.consent=false;
+  document.getElementById('result-scr').classList.remove('on');
+  IDS.forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('s_consent').classList.add('on');
+  document.body.classList.add('pre-consent');
+  document.getElementById('consentBtn').disabled=true;
+  document.getElementById('pF').style.width='0%';
+  document.getElementById('tT').textContent='My Health Profile';
+  document.getElementById('tS').textContent='';
+  updateDots(0);
+  document.querySelectorAll('.hq-opt,.lk-btn').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.ynb').forEach(b=>b.classList.remove('y','n'));
+  document.querySelectorAll('.lk-item').forEach(i=>i.classList.remove('done'));
+  document.querySelectorAll('.ctog').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.num-inp,.form-ta').forEach(i=>i.value='');
+  document.getElementById('bmiMini').style.display='none';
+  swUnit('us');
+  window.scrollTo(0,0);
+};
+
+ui(0);
+</script>
+</body>
+</html>
